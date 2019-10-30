@@ -7,7 +7,13 @@
   "author": "jayounglee92 <lzy6853@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "koa": "^2.10.0"
+    "cross-env": "^6.0.3",
+    "dotenv": "^8.2.0",
+    "koa": "^2.10.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "mongoose": "^5.7.7",
+    "nodemon": "^1.19.4"
   },
   "devDependencies": {
     "eslint": "^6.5.1",
@@ -17,5 +23,9 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.16.0",
     "eslint-plugin-standard": "^4.0.1"
+  },
+  "scripts": {
+    "start": "cross-env NODE_PATH=src node src",
+    "start:dev": "cross-env NODE_PATH=src nodemon --watch src/ src/index.js"
   }
 }
