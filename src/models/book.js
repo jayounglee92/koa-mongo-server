@@ -9,7 +9,7 @@ const Authur = new Schema({
 
 const Book = new Schema({
     title: String,
-    authur: [Authur], // 위에서 만든 Author 스키마를 가진 객체들의 배열형태로 설정했습니다.
+    authors: [Authur], // 위에서 만든 Author 스키마를 가진 객체들의 배열형태로 설정했습니다.
     publishedDate: Date,
     price: Number,
     tags: [String],
