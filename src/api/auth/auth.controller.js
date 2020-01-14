@@ -44,12 +44,21 @@ exports.localRegister = async (ctx) => {
         ctx.throw(500, e);
     }
 
+    // 4. 쿠키 설정
+    let token = null;
+    try {
+        token = await account.generateToken();
+    } catch (e) {
+        ctx.throw(500, e);
+    }
+
+    ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
     ctx.body = account.profile; // 프로필 정보로 응답합니다.
 };
 
 // 로컬 로그인
 exports.localLogin = async (ctx) => {
-    // 데이터 검증
+    // 1. 데이터 검증
     const schema = Joi.object().keys({
         email: Joi.string().email().required(),
         password: Joi.string().required()
@@ -62,6 +71,7 @@ exports.localLogin = async (ctx) => {
         return;
     }
 
+    // 2. 이메일, 바밀번호 확인
     const { email, password } = ctx.request.body; 
 
     let account = null;
@@ -78,7 +88,16 @@ exports.localLogin = async (ctx) => {
         return;
     }
 
-    ctx.body = account.profile;
+    // 3. 쿠키 설정
+    let token = null;
+    try {
+        token = await account.generateToken();
+    } catch (e) {
+        ctx.throw(500, e);
+    }
+
+    ctx.cookies.set('access_token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 });
+    ctx.body = account.profile; // 프로필 정보로 응답합니다.
 };
 
 // 이메일/아이디 존재유무 확인
@@ -99,8 +118,22 @@ exports.exists = async (ctx) => {
 };
 
 // 로그아웃
-exports.logout = async (ctx) => {
-    ctx.body = 'logout';
+exports.logout = (ctx) => {
+    ctx.cookies.set('access_token', null, {
+        maxAge: 0, 
+        httpOnly: true
+    });
+    ctx.status = 204;
 };
 
 
+exports.check = (ctx) => {
+    const { user } = ctx.request;
+
+    if(!user) {
+        ctx.status = 403; // Forbidden
+        return;
+    }
+
+    ctx.body = user.profile;
+};
